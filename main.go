@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	// "errors"
 )
 
 // to store book data in memory
@@ -43,10 +42,24 @@ func createBooks(c *gin.Context){
 	c.IndentedJSON(http.StatusCreated, newBook)
 }
 
+func getBookById(c * gin.Context){
+	id:=c.Param("id")
+
+	// loop over the list of books, looking for a book whose ID value matches the parameter
+	for _, b:= range books{
+		if b.ID == id{
+			c.IndentedJSON(http.StatusOK, b)
+			return
+		}
+	}
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "book not found"})
+
+}
 func main(){
 	// gin router setup
 	router:= gin.Default()
 	router.GET("/books", getBooks)
+	router.GET("books/:id", getBookById)
 	router.POST("/books", createBooks)
 	router.Run("localhost:8080")
 
